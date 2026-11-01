@@ -128,7 +128,7 @@
     inp.addEventListener('input', function () { var c = normCode(inp.value).slice(0, 9); var f = c.replace(/(.{3})(?=.)/g, '$1-'); if (f !== inp.value) inp.value = f; });
     var go = function () {
       er.style.display = 'none'; btn.disabled = true; btn.textContent = 'بيربط...';
-      pair(inp.value).then(function () { if (!pack) { syncErr = syncErr || 'اتربط، بس القضايا لسه ما نزلتش — هتنزل أول ما النت يرجع'; render(); } })
+      pair(inp.value).then(function () { if (T && !pack) { syncErr = syncErr || 'اتربط، بس القضايا لسه ما نزلتش — هتنزل أول ما النت يرجع'; render(); } })
         .catch(function (e) { er.textContent = e.message; er.style.display = 'block'; btn.disabled = false; btn.textContent = 'اربط'; });
     };
     btn.onclick = go; inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
