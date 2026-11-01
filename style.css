@@ -1,0 +1,8 @@
+:root{--navy:#0F1C33;--gold:#C9A24A;--ink:#14213D;--paper:#F7F4EC;--muted:#5B6476}
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,"Segoe UI",Arial,sans-serif;background:var(--paper);color:var(--ink);line-height:1.9}
+header{background:var(--navy);color:#F3EEDF;padding:36px 20px;text-align:center}
+header img{width:72px;height:72px;border-radius:16px}header h1{margin:10px 0 4px;color:#E2C27A;font-size:30px}header p{margin:0;color:#B9C2D3}
+nav{text-align:center;padding:12px;background:#132544}nav a{color:#E2C27A;margin:0 10px;text-decoration:none}
+main{max-width:860px;margin:0 auto;padding:28px 20px 60px}h2{color:var(--navy);border-bottom:2px solid var(--gold);padding-bottom:4px;margin-top:34px}
+.en{direction:ltr;text-align:left;border-top:1px dashed #cfc6ae;margin-top:40px;padding-top:10px}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:20px}code{background:#ece6d6;padding:1px 6px;border-radius:5px}
