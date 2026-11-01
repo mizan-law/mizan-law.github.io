@@ -1,0 +1,21 @@
+@font-face{font-family:P;src:url(https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans-arabic@5.2.8/files/ibm-plex-sans-arabic-arabic-400-normal.woff2) format('woff2');font-weight:400}
+@font-face{font-family:P;src:url(https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans-arabic@5.2.8/files/ibm-plex-sans-arabic-arabic-600-normal.woff2) format('woff2');font-weight:600}
+@font-face{font-family:P;src:url(https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans-arabic@5.2.8/files/ibm-plex-sans-arabic-latin-400-normal.woff2) format('woff2');font-weight:400;unicode-range:U+0000-00FF}
+@font-face{font-family:R;src:url(https://cdn.jsdelivr.net/npm/@fontsource/aref-ruqaa@5.2.8/files/aref-ruqaa-arabic-700-normal.woff2) format('woff2')}
+*{box-sizing:border-box}
+body{margin:0;font-family:P,Tahoma,sans-serif;background:#0F1C33;color:#F3EEDF;min-height:100vh;display:flex;flex-direction:column}
+header{padding:28px 22px 18px;text-align:center}
+header .w{font-family:R,serif;font-size:56px;color:#E2C27A;line-height:1}
+header small{display:block;color:#9AA6BC;margin-top:8px;font-size:14px}
+main{flex:1;background:#F4F1E8;color:#14213D;border-radius:22px 22px 0 0;padding:24px 20px 28px}
+h1{font-size:22px;margin:0 0 6px}
+p{line-height:1.8;color:#4B5568;margin:0 0 14px;font-size:14.5px}
+label{display:block;font-size:13px;color:#4B5568;margin:14px 0 6px;font-weight:600}
+input{width:100%;font:inherit;font-size:17px;padding:12px 14px;border:1px solid #D7D0BD;border-radius:12px;background:#fff;color:#14213D}
+input.code{font-size:22px;letter-spacing:2px;text-align:center;font-family:monospace}
+.row{display:flex;gap:10px}.row>div:first-child{flex:2}.row>div:last-child{flex:1}
+button{width:100%;font:inherit;font-size:17px;font-weight:600;padding:14px;border:0;border-radius:12px;margin-top:18px;background:linear-gradient(180deg,#E2C27A,#B58A3C);color:#14213D}
+button.ghost{background:transparent;color:#8E2F2F;border:1px solid #E3CFCB}
+.err{background:#F6E6E3;color:#8E2F2F;border-radius:10px;padding:10px 12px;margin-top:14px;font-size:14px;line-height:1.7;display:none}
+.hint{font-size:12.5px;color:#7A8294;margin-top:16px;line-height:1.7}
+ol{padding-inline-start:20px;color:#4B5568;line-height:2;font-size:14.5px;margin:0}

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0F1C33">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ميزان"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="referrer" content="no-referrer">
+<title>ميزان — موبايل المحامي</title>
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+<style>
+body{padding-top:env(safe-area-inset-top)}
+.bar{background:#0F1C33;color:#F3EEDF;padding:12px 16px;position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px}
+.bar .t{flex:1;min-width:0}.bar b{color:#E2C27A;font-size:18px}.bar small{display:block;color:#9AA6BC;font-size:12px;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .ib{width:auto;margin:0;padding:8px 12px;font-size:13px;border-radius:10px;background:#1d3156;color:#E9E4D4}
+.tabs{display:flex;gap:6px;padding:10px 12px;background:#132544;position:sticky;top:60px;z-index:5}
+.tabs button{margin:0;padding:9px;font-size:14px;background:#1d3156;color:#E9E4D4;border-radius:10px}
+.tabs button.on{background:linear-gradient(180deg,#E2C27A,#B58A3C);color:#14213D}
+.wrap{padding:12px 14px 80px;background:#F4F1E8;color:#14213D;min-height:100vh}
+.card{background:#fff;border:1px solid #E3DCC8;border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.card h3{margin:0 0 4px;font-size:16px}.muted{color:#5B6476;font-size:13px;line-height:1.7}
+.pill{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:99px;background:#EEE7D4;color:#6B5420;margin-inline-start:6px}
+.pill.red{background:#F6E3E1;color:#8E2F2F}.pill.green{background:#E2F1E8;color:#1E6B45}
+.day{font-weight:700;color:#0F1C33;margin:14px 2px 6px;font-size:14px}
+button.sm{width:auto;margin:8px 0 0;padding:8px 14px;font-size:14px}
+button.sm.ghost{color:#14213D;border-color:#D7D0BD}
+textarea{width:100%;font:inherit;font-size:16px;padding:10px;border:1px solid #D7D0BD;border-radius:12px;min-height:90px}
+.wm{position:fixed;inset:0;pointer-events:none;z-index:50;background-repeat:repeat}
+.empty{text-align:center;color:#7A8294;padding:40px 10px}
+.note{background:#FBF3E0;color:#6B5420;border-radius:10px;padding:10px 12px;font-size:13.5px;line-height:1.7;margin-bottom:10px}
+.note.red{background:#F6E6E3;color:#8E2F2F}.note.green{background:#E2F1E8;color:#1E6B45}
+#q{margin-bottom:10px}
+.install{margin-top:18px;background:#fff;border:1px dashed #D7C9A3;border-radius:12px;padding:12px;font-size:13.5px;line-height:1.8;color:#4B5568}
+</style></head>
+<body><div id="app"></div>
+<noscript>لازم تفعّل JavaScript</noscript>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body></html>
