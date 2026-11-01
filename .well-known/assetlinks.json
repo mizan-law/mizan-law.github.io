@@ -1,0 +1,5 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": { "namespace": "android_app", "package_name": "com.mizan.office",
+    "sha256_cert_fingerprints": ["55:DD:57:14:32:14:4C:85:1C:C7:BB:CE:DC:49:AD:1C:BC:07:F6:7D:20:6D:CA:C4:0D:A5:D1:59:81:A3:2A:40"] }
+}]
