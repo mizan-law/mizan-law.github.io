@@ -145,11 +145,15 @@
       '<div class="tabs"><button data-t="h" class="' + (tab === 'h' ? 'on' : '') + '">الجلسات</button><button data-t="c" class="' + (tab === 'c' ? 'on' : '') + '">القضايا</button></div>';
   }
   function hearingCard(h, withCase) {
-    var c = caseOf[h.case_id] || {}; var p = pendingFor[h.id];
+    var c0 = caseOf[h.case_id] || {}; var p = pendingFor[h.id];
+    // ميزان 2.3.0: الجلسة بتحمل رقم/محكمة/دائرة درجتها (النسخ الأقدم من الكمبيوتر مابتبعتهاش ⇒ بيانات القضية)
+    var c = h.stage_id ? { subject: c0.subject, client_name: c0.client_name, case_number: h.stage_number, case_year: h.stage_year,
+      court: h.stage_court || c0.court, circuit: h.stage_circuit || c0.circuit, degree: h.stage_degree } : c0;
     var late = h.date < today && !h.done && !p;
     return '<div class="card"><h3>' + (withCase ? esc(c.subject) : esc(fmt(h.date))) + (h.time ? ' <span class="pill">' + esc(h.time) + '</span>' : '') +
       (p ? '<span class="pill">القرار مستني يترفع</span>' : h.done ? '<span class="pill green">اتسجّل القرار</span>' : late ? '<span class="pill red">محتاج قرار</span>' : '') + '</h3>' +
-      (withCase ? '<div class="muted">' + esc(caseNo(c)) + ' · ' + esc(c.court || '') + (c.circuit ? ' — ' + esc(c.circuit) : '') + ' · ' + esc(c.client_name || '') + '</div>' : '') +
+      (withCase ? '<div class="muted">' + (c.degree ? esc(c.degree) + ' ' : '') + esc(caseNo(c)) + ' · ' + esc(c.court || '') + (c.circuit ? ' — ' + esc(c.circuit) : '') + ' · ' + esc(c.client_name || '') + '</div>' : '') +
+      (!withCase && h.stage_degree ? '<div class="muted">' + esc(h.stage_degree) + (h.stage_number ? ' ' + esc(caseNo(c)) : '') + '</div>' : '') +
       (h.purpose ? '<div class="muted">' + esc(h.purpose) + '</div>' : '') +
       (h.decision ? '<div class="muted"><b>القرار:</b> ' + esc(h.decision) + '</div>' : '') +
       (p ? '<div class="muted"><b>قرارك:</b> ' + esc(p.decision) + (p.next_date ? ' — الجاية ' + esc(p.next_date) : '') + '</div>' : '') +
