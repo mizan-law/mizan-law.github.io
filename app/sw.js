@@ -1,6 +1,6 @@
 // ميزان — بيخلّي التطبيق يفتح من غير نت. البيانات نفسها مش هنا (في التخزين المحلي، ومشفّرة وهي ماشية).
-const V = 'mizan-app-2.3.0';
-const SHELL = ['./', 'index.html', 'app.js', 'config.js', 'style.css', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
+const V = 'mizan-app-2.3.2-full';
+const SHELL = ['./', 'index.html', 'mobile.js', 'app.js', 'config.js', 'style.css', 'mobile.css', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(V).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== V).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', (e) => {
