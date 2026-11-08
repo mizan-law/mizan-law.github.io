@@ -3,4 +3,6 @@
 window.MIZAN_CFG = {
   relay: 'https://script.google.com/macros/s/AKfycbylWe7pONjnWaZYTWdj1kryattAKAp2RHbjAyjcRmaURFNBzrNr3ZgQwhHqV4uuBQ6_/exec',
   apiKey: '',
+  // (3.0.0) ملف التحديثات على Drive (Mizan-Updates.txt) — «الموبايل لوحده» بيقرا منه حزمة البرنامج الموقّعة (سطر MZB1)
+  channel: '15xN9DKJ6CvsuLNuYuem4VgTNU4VSpvoS',
 };
