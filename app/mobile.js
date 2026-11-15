@@ -129,7 +129,10 @@ async function runFetches(){var list=outbox.filter(function(o){return o.op==='fe
 function upLeft(o){return o.resend&&o.resend.length?o.resend.length:Math.max(0,o.n-(o.next||0))}
 function upPct(o){return Math.round(100*(o.n-upLeft(o))/o.n)}
 async function runUploads(){var caps=pack&&pack.caps;var list=outbox.filter(function(o){return o.op==='upload'&&!o.failed});
-  for(var k=0;k<list.length;k++){var o=list[k];await uploadFbox(o);if(!caps||!caps.chunks){o.err='حدّث ميزان على الكمبيوتر لـ 2.3.3 عشان يستقبل الملفات من الموبايل';continue}
+  for(var k=0;k<list.length;k++){var o=list[k];await uploadFbox(o);
+    /* 3.4.0: المكتب بياخد الملف من صندوقه — مفيش رفع تاني بالأجزاء (إلا لو المكتب طلبها) */
+    if(caps&&caps.fbox_pc&&o.fbox&&o.fbox.sent===1&&!(o.resend&&o.resend.length)&&!(o.next>0)&&!o.viaFbox){o.viaFbox=1;o.next=o.n;o.doneAt=Date.now();await saveState();continue}
+    if(!caps||!caps.chunks){o.err='حدّث ميزان على الكمبيوتر لـ 2.3.3 عشان يستقبل الملفات من الموبايل';continue}
     var idx=o.resend&&o.resend.length?o.resend.slice():[];if(!idx.length)for(var i=o.next||0;i<o.n;i++)idx.push(i);
     if(!idx.length){if(o.doneAt&&Date.now()-o.doneAt>UPLOAD_WAIT){o.failed=true;o.err='ماوصلش رد من المكتب'}continue}
     var bytes=await sGet('f:'+o.uid,null,true);if(!bytes){o.failed=true;o.err='الملف مش موجود على الموبايل';continue}
