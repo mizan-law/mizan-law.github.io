@@ -143,7 +143,9 @@ async function runUploads(){var caps=pack&&pack.caps;var list=outbox.filter(func
       if(j%4===3||j===idx.length-1){await saveState();renderProgress(o)}}
     if(!upLeft(o))o.doneAt=Date.now()}
   uploading=null}
-async function sync(force){if(!T||!DK||syncing)return;if(T.standalone){if(window.MZFull)MZFull.soloSync(force);return}syncing=true;syncErr='';render();var down=false;
+/* 3.4.0: إيقاف مؤقت للمزامنة من الموبايل — بيرجع لوحده بعد 24 ساعة (عشان أوامر المكتب زي إلغاء الربط توصل) */
+var PAUSE_MAX=24*3600*1000;function pausedUntil(){var p=Number(lsGet('pause')||0);if(p&&p<=Date.now()){lsSet('pause',null);return 0}return p}
+async function sync(force){if(!T||!DK||syncing)return;if(T.standalone){if(window.MZFull)MZFull.soloSync(force);return}if(pausedUntil())return;syncing=true;syncErr='';render();var down=false;
   try{await sendItems(force)}catch(e){down=isNet(e);syncErr=down?'مفيش إنترنت':isFull(e)?'صندوق المزامنة مليان — مستني كمبيوتر المكتب يستلم':e.message}
   await saveState();
   var fresh=false;try{var np=await fetchPack();fresh=true;if(!DK){syncing=false;return}if(np.gone){syncing=false;await wipe('المكتب ألغى ربط الجهاز');return}if(np.wipe){syncing=false;await wipe('مدير المكتب أوقف نسخة الموبايل للحساب');return}
@@ -309,7 +311,7 @@ function boot(first){first();
 // 3.0.0: الأدوات اللي full.js بيستخدمها
 window.__mz={get T(){return T},set T(v){T=v},get pack(){return pack},set pack(v){pack=v},get outbox(){return outbox},get foreign(){return foreign},fetchFbox:fetchFbox,set outbox(v){outbox=v},get downloads(){return downloads},get DK(){return DK},get syncing(){return syncing},get syncErr(){return syncErr},get lastSync(){return lastSync},set lastSync(v){lastSync=v},
   set legacyView(v){legacyView=v},sGet:sGet,sSet:sSet,kvGet:kvGet,kvSet:kvSet,kvClear:kvClear,saveState:saveState,render:render,sync:sync,note:note,lock:lock,wipe:wipe,relay:relay,fetchBlob:fetchBlob,
-  queueUpload:queueUpload,enqueueDownload:enqueueDownload,decrypt:decrypt,storeDownload:storeDownload,canDownload:canDownload,openDownload:openDownload,saveBlob:saveBlob,uid:uid,lsGet:lsGet,lsSet:lsSet,createLock:createLock,renderSetPin:renderSetPin,renderPair:renderPair,
+  queueUpload:queueUpload,enqueueDownload:enqueueDownload,decrypt:decrypt,storeDownload:storeDownload,canDownload:canDownload,openDownload:openDownload,saveBlob:saveBlob,uid:uid,pausedUntil:pausedUntil,PAUSE_MAX:PAUSE_MAX,lsGet:lsGet,lsSet:lsSet,createLock:createLock,renderSetPin:renderSetPin,renderPair:renderPair,
   b64ToBytes:b64ToBytes,bytesToB64:bytesToB64,gunzip:gunzip,touch:function(){lastAct=Date.now()},showSync:function(){legacyView=true;page='sync';selected=null;render()},APP_V:APP_V,esc:esc,money:money,fmtDate:fmtDate,ago:ago};
 if(window.__mzFullInit)window.__mzFullInit();
 start();
