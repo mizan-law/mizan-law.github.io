@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 var CFG=window.MIZAN_CFG||{},app=document.getElementById('app'),ALPHA='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-var enc8=new TextEncoder(),dec8=new TextDecoder(),SYNC_MS=3*60*1000,RESEND_MS=5*60*1000,RESEND_MAX=6*3600*1000,BATCH_MAX=200*1024,MAX_TRIES=5,UPLOAD_WAIT=6*3600*1000;
+var syncAgain=0,enc8=new TextEncoder(),dec8=new TextDecoder(),SYNC_MS=3*60*1000,RESEND_MS=5*60*1000,RESEND_MAX=6*3600*1000,BATCH_MAX=200*1024,MAX_TRIES=5,UPLOAD_WAIT=6*3600*1000;
 var CHUNK=144*1024,MAX_FILE=20*1024*1024,IDLE_MS=5*60*1000,PIN_ITER=250000,MAX_FAILS=10,PRF_SALT=enc8.encode('mizan-app-lock-prf-v1');
 var DEMO=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)&&/[?&]demo=1(?:&|$)/.test(location.search);
 var foreign=[],feedCur='',feedBox='';
@@ -148,7 +148,7 @@ async function runUploads(){var caps=pack&&pack.caps;var list=outbox.filter(func
   uploading=null}
 /* 3.4.0: إيقاف مؤقت للمزامنة من الموبايل — بيرجع لوحده بعد 24 ساعة (عشان أوامر المكتب زي إلغاء الربط توصل) */
 var PAUSE_MAX=24*3600*1000;function pausedUntil(){var p=Number(lsGet('pause')||0);if(p&&p<=Date.now()){lsSet('pause',null);return 0}return p}
-async function sync(force){if(!T||!DK||syncing)return;if(T.standalone){if(window.MZFull)MZFull.soloSync(force);return}if(pausedUntil())return;syncing=true;syncErr='';render();var down=false;
+async function sync(force){if(T&&DK&&syncing){syncAgain=syncAgain||force||1;return}if(!T||!DK||syncing)return;if(T.standalone){if(window.MZFull)MZFull.soloSync(force);return}if(pausedUntil())return;syncing=true;syncErr='';render();var down=false;
   try{await sendItems(force)}catch(e){down=isNet(e);syncErr=down?'مفيش إنترنت':isFull(e)?'صندوق المزامنة مليان — مستني كمبيوتر المكتب يستلم':e.message}
   await saveState();
   var fresh=false;try{var np=await fetchPack();fresh=true;if(!DK){syncing=false;return}if(np.gone){syncing=false;await wipe('المكتب ألغى ربط الجهاز');return}if(np.wipe){syncing=false;await wipe('مدير المكتب أوقف نسخة الموبايل للحساب');return}
@@ -156,7 +156,9 @@ async function sync(force){if(!T||!DK||syncing)return;if(T.standalone){if(window
   // مفيش نسخة جديدة من المكتب (الكمبيوتر مقفول): تعديلات الموبايلات التانية بتتطبّق فوق النسخة اللي عندي
   if(!down&&DK&&pack&&pack.feed&&!fresh){try{if(await peekFeed()&&window.MZFull&&MZFull.onFeed)await MZFull.onFeed()}catch(e){}}
   if(!down&&DK){try{await runFetches();await runUploads()}catch(e){if(!syncErr)syncErr=isNet(e)?'مفيش إنترنت':isFull(e)?'صندوق المزامنة مليان — مستني كمبيوتر المكتب يستلم':e.message}uploading=null;await saveState()}
-  syncing=false;if(DK)render()}
+  syncing=false;if(DK)render();
+  // 3.5.2: تعديل اتعمل والمزامنة شغالة ⇒ يتبعت أول ما اللي قبله يخلص (بدل ما يستنى 3 دقايق)
+  if(syncAgain&&DK){var f=syncAgain===true;syncAgain=0;setTimeout(function(){sync(f)},300)}}
 function renderProgress(o){var el=document.querySelector('[data-prog="'+o.uid+'"]');if(el){el.querySelector('i').style.width=upPct(o)+'%';el.querySelector('span').textContent=upPct(o)+'%'}}
 async function retryOp(id){var o=outbox.find(function(x){return x.uid===id});if(!o)return;o.failed=false;o.tries=0;o.err='';o.sent=0;o.sends=0;if(o.op==='upload'&&!upLeft(o)){o.next=0;o.resend=[];o.doneAt=0}await saveState();render();sync(true)}
 async function cancelOp(id){var o=outbox.find(function(x){return x.uid===id});if(!o)return;if(!confirm('إلغاء العملية دي؟ مش هتوصل المكتب.'))return;outbox=outbox.filter(function(x){return x!==o});if(o.op==='upload'){await kvSet('f:'+o.uid,null);if(pack&&pack.documents)pack.documents=pack.documents.filter(function(d){return d._up!==o.uid})}await saveState();render();sync(true)}
