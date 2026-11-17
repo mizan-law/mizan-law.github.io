@@ -1,5 +1,5 @@
 // ميزان — بيخلّي التطبيق يفتح من غير نت. البيانات نفسها مش هنا (في التخزين المحلي، ومشفّرة وهي ماشية).
-const V = 'mizan-app-3.8.0';   // 3.8.0: السيرفر السريع (Cloudflare) + تحذير 7 أيام
+const V = 'mizan-app-3.8.0-2';   // 3.8.0: الموبايل في العدّاد + قفل التجربة على الأندرويد
 const SHELL = ['./', 'index.html', 'full.js', 'mobile.js', 'app.js', 'config.js', 'style.css', 'mobile.css', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'voice-shim.js'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(V).then((c) => c.addAll(SHELL.map((f) => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== V && !/^mizan-run-/.test(k)).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
