@@ -123,7 +123,8 @@ var fws=null,fwsBox='',fwsTimer=0,fwsRetry=0,feedBusy=false,feedAgain=false;
 function feedClose(){var w=fws;fws=null;fwsBox='';if(w){try{w.close()}catch(e){}}}
 function feedListen(){var f=pack&&pack.feed;if(!T||T.standalone||!DK||!f||!f.b||!fastOn()||typeof WebSocket!=='function'||pausedUntil()){feedClose();return}
   if((fws&&fwsBox===f.b)||fwsTimer)return;feedClose();fwsBox=f.b;var w;try{w=new WebSocket(CFG.fast.replace(/^http/,'ws').replace(/\/?$/,'/ws'))}catch(e){fwsBox='';return}fws=w;
-  w.onopen=function(){if(fws!==w)return;fwsRetry=0;try{w.send(JSON.stringify({sub:[fwsBox]}))}catch(e){}};
+  w.onopen=function(){if(fws!==w)return;fwsRetry=0;try{w.send(JSON.stringify({sub:[fwsBox]}))}catch(e){}
+    /* 3.8.3: أي إشعار جه والاتصال واقع (أو قبل الاشتراك) كان بيضيع لحد المزامنة الجاية ⇒ أول ما يفتح نبص على الصندوق مرة */setTimeout(feedNow,200)};
   w.onmessage=function(e){var m;try{m=JSON.parse(e.data)}catch(x){return}if(m&&m.t==='new')feedNow()};
   var down=function(){if(fws!==w)return;fws=null;fwsBox='';var d=Math.min(60000,2000*Math.pow(2,Math.min(fwsRetry++,5)));fwsTimer=setTimeout(function(){fwsTimer=0;feedListen()},d)};
   w.onclose=down;w.onerror=down}
@@ -339,7 +340,7 @@ function boot(first){first();
   document.addEventListener('visibilitychange',function(){if(document.hidden){hiddenAt=Date.now();return}if(DK&&hiddenAt&&Date.now()-hiddenAt>IDLE_MS)return lock();if(DK&&Date.now()-lastSync>60000)sync(false)});
   if(!DEMO){setInterval(function(){if(!document.hidden&&DK)sync(false)},SYNC_MS);window.addEventListener('online',function(){if(DK)sync(false)})}}
 // 3.0.0: الأدوات اللي full.js بيستخدمها
-window.__mz={fastReset:function(){fastBad=0},get fastBad(){return fastBad},get T(){return T},set T(v){T=v},get pack(){return pack},set pack(v){pack=v},get outbox(){return outbox},get foreign(){return foreign},fetchFbox:fetchFbox,set outbox(v){outbox=v},get downloads(){return downloads},get DK(){return DK},get syncing(){return syncing},get syncErr(){return syncErr},get lastSync(){return lastSync},set lastSync(v){lastSync=v},
+window.__mz={fastReset:function(){fastBad=0},get fws(){return fws},peekFeed:function(){return peekFeed()},get feedCur(){return feedCur},get fastBad(){return fastBad},get T(){return T},set T(v){T=v},get pack(){return pack},set pack(v){pack=v},get outbox(){return outbox},get foreign(){return foreign},fetchFbox:fetchFbox,set outbox(v){outbox=v},get downloads(){return downloads},get DK(){return DK},get syncing(){return syncing},get syncErr(){return syncErr},get lastSync(){return lastSync},set lastSync(v){lastSync=v},
   set legacyView(v){legacyView=v},sGet:sGet,sSet:sSet,kvGet:kvGet,kvSet:kvSet,kvClear:kvClear,saveState:saveState,render:render,sync:sync,note:note,lock:lock,wipe:wipe,relay:relay,fetchBlob:fetchBlob,
   queueUpload:queueUpload,enqueueDownload:enqueueDownload,decrypt:decrypt,storeDownload:storeDownload,canDownload:canDownload,openDownload:openDownload,saveBlob:saveBlob,uid:uid,pausedUntil:pausedUntil,PAUSE_MAX:PAUSE_MAX,lsGet:lsGet,lsSet:lsSet,createLock:createLock,renderSetPin:renderSetPin,renderPair:renderPair,
   b64ToBytes:b64ToBytes,bytesToB64:bytesToB64,gunzip:gunzip,touch:function(){lastAct=Date.now()},showSync:function(){legacyView=true;page='sync';selected=null;render()},APP_V:APP_V,esc:esc,money:money,fmtDate:fmtDate,ago:ago};
