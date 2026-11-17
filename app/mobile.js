@@ -119,7 +119,7 @@ async function peekFeed(){var f=pack&&pack.feed;if(!f||!f.k)return false;if(feed
   var done=new Set(pack.applied||[]),old=Date.now()-30*86400000;foreign=foreign.filter(function(x){return!done.has(x.uid)&&(x.at||0)>old}).slice(-2000);await sSet('foreign',foreign);await kvSet('feedcur',feedCur);return got}
 // 3.8.1: الإشعار الفوري للموبايلات — الموبايل المفتوح مشترك في الصندوق المشترك على السيرفر السريع (رقم الصندوق بس، مش المفتاح)،
 // وأول ما أي موبايل تاني يحط تعديل أو مستند ⇒ بيسحب على طول (من غير ما يستنى 3 دقايق ومن غير الكمبيوتر). لو السريع واقع ⇒ زي الأول.
-var fws=null,fwsBox='',fwsTimer=0,fwsRetry=0,feedBusy=false;
+var fws=null,fwsBox='',fwsTimer=0,fwsRetry=0,feedBusy=false,feedAgain=false;
 function feedClose(){var w=fws;fws=null;fwsBox='';if(w){try{w.close()}catch(e){}}}
 function feedListen(){var f=pack&&pack.feed;if(!T||T.standalone||!DK||!f||!f.b||!fastOn()||typeof WebSocket!=='function'||pausedUntil()){feedClose();return}
   if((fws&&fwsBox===f.b)||fwsTimer)return;feedClose();fwsBox=f.b;var w;try{w=new WebSocket(CFG.fast.replace(/^http/,'ws').replace(/\/?$/,'/ws'))}catch(e){fwsBox='';return}fws=w;
@@ -127,8 +127,10 @@ function feedListen(){var f=pack&&pack.feed;if(!T||T.standalone||!DK||!f||!f.b||
   w.onmessage=function(e){var m;try{m=JSON.parse(e.data)}catch(x){return}if(m&&m.t==='new')feedNow()};
   var down=function(){if(fws!==w)return;fws=null;fwsBox='';var d=Math.min(60000,2000*Math.pow(2,Math.min(fwsRetry++,5)));fwsTimer=setTimeout(function(){fwsTimer=0;feedListen()},d)};
   w.onclose=down;w.onerror=down}
-async function feedNow(){if(!DK||!T||T.standalone)return;if(syncing){syncAgain=syncAgain||1;return}if(feedBusy)return;feedBusy=true;
-  try{if(await peekFeed()&&window.MZFull&&MZFull.onFeed)await MZFull.onFeed()}catch(e){}feedBusy=false}
+// إشعار وصل والموبايل في نص مزامنة أو سحب ⇒ يتسجّل ويتسحب أول ما يخلص (المزامنة لو جابت حزمة من المكتب مابتبصش على الصندوق المشترك)
+async function feedNow(){if(!DK||!T||T.standalone)return;if(syncing||feedBusy){feedAgain=true;return}feedBusy=true;feedAgain=false;
+  try{if(await peekFeed()&&window.MZFull&&MZFull.onFeed)await MZFull.onFeed()}catch(e){}feedBusy=false;
+  if(feedAgain&&!syncing){feedAgain=false;setTimeout(feedNow,50)}}
 async function sendItems(force){var list=outbox.filter(function(o){return due(o,force)}),batch=[],size=0;
   async function one(b){await send({t:'items',items:b.map(wire)});try{await sendFeed(b.map(wire))}catch(e){if(isNet(e))throw e};var now=Date.now();b.forEach(function(o){o.sent=now;o.sends=(o.sends||0)+1;o.tries=0;o.err=''})}
   async function flush(){if(!batch.length)return;var b=batch;batch=[];size=0;try{await one(b)}catch(e){if(isNet(e)||isFull(e))throw e;
@@ -179,6 +181,7 @@ async function sync(force){if(T&&DK&&syncing){syncAgain=syncAgain||force||1;retu
   if(!down&&DK){try{await runFetches();await runUploads()}catch(e){if(!syncErr)syncErr=isNet(e)?'مفيش إنترنت':isFull(e)?'صندوق المزامنة مليان — مستني كمبيوتر المكتب يستلم':e.message}uploading=null;await saveState()}
   syncing=false;if(DK)render();
   try{feedListen()}catch(e){}
+  if(feedAgain&&DK){feedAgain=false;setTimeout(feedNow,50)}
   // 3.5.2: تعديل اتعمل والمزامنة شغالة ⇒ يتبعت أول ما اللي قبله يخلص (بدل ما يستنى 3 دقايق)
   if(syncAgain&&DK){var f=syncAgain===true;syncAgain=0;setTimeout(function(){sync(f)},300)}}
 function renderProgress(o){var el=document.querySelector('[data-prog="'+o.uid+'"]');if(el){el.querySelector('i').style.width=upPct(o)+'%';el.querySelector('span').textContent=upPct(o)+'%'}}
